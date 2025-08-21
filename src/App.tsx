@@ -1,27 +1,71 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import './App.scss';
 import { GoodsList } from './GoodsList';
+import { Good } from './types/Good';
 
-// import { getAll, get5First, getRed } from './api/goods';
-// or
-// import * as goodsAPI from './api/goods';
+import { getAll, get5First, getRedGoods } from './api/goods';
 
-export const App: React.FC = () => (
-  <div className="App">
-    <h1>Dynamic list of Goods</h1>
+enum Load {
+  All,
+  Five,
+  Red,
+}
 
-    <button type="button" data-cy="all-button">
-      Load all goods
-    </button>
+export const App: React.FC = () => {
+  const [goodsList, setGoodsList] = useState<Good[]>([]);
+  const [selectLoad, setLoad] = useState<Load | null>(null);
 
-    <button type="button" data-cy="first-five-button">
-      Load 5 first goods
-    </button>
+  useEffect(() => {
+    switch (selectLoad) {
+      case Load.All:
+        getAll().then(goods => setGoodsList(goods));
+        break;
+      case Load.Five:
+        get5First().then(goods => setGoodsList(goods));
+        break;
+      case Load.Red:
+        getRedGoods().then(goods => setGoodsList(goods));
+        break;
+      default:
+        setGoodsList([]);
+    }
+  }, [selectLoad]);
 
-    <button type="button" data-cy="red-button">
-      Load red goods
-    </button>
+  return (
+    <div className="App">
+      <h1>Dynamic list of Goods</h1>
 
-    <GoodsList goods={[]} />
-  </div>
-);
+      <button
+        type="button"
+        data-cy="all-button"
+        onClick={() => {
+          setLoad(Load.All);
+        }}
+      >
+        Load all goods
+      </button>
+
+      <button
+        type="button"
+        data-cy="first-five-button"
+        onClick={() => {
+          setLoad(Load.Five);
+        }}
+      >
+        Load 5 first goods
+      </button>
+
+      <button
+        type="button"
+        data-cy="red-button"
+        onClick={() => {
+          setLoad(Load.Red);
+        }}
+      >
+        Load red goods
+      </button>
+
+      {selectLoad !== null && <GoodsList goods={goodsList} />}
+    </div>
+  );
+};
