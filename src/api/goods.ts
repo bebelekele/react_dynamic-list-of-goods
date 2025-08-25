@@ -1,7 +1,7 @@
 import { Good } from '../types/Good';
 
 // eslint-disable-next-line
-const API_URL = `https://mate-academy.github.o/react_dynamic-list-of-goods/goods.json`;
+const API_URL = `https://mate-academy.github.io/react_dynamic-list-of-goods/goods.json`;
 
 export async function getAll(): Promise<Good[]> {
   const res = await fetch(API_URL);

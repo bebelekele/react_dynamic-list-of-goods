@@ -31,23 +31,24 @@ export const App: React.FC = () => {
         case Load.All:
           getAll()
             .then(goods => setGoodsList(goods))
-            .catch(() => setErrorMessage('Failed to load goods.'));
+            .catch(() => setErrorMessage('Failed to load goods.'))
+            .finally(() => setLoading(false));
           break;
         case Load.Five:
           get5First()
             .then(goods => setGoodsList(goods))
-            .catch(() => setErrorMessage('Failed to load goods.'));
+            .catch(() => setErrorMessage('Failed to load goods.'))
+            .finally(() => setLoading(false));
           break;
         case Load.Red:
           getRedGoods()
             .then(goods => setGoodsList(goods))
-            .catch(() => setErrorMessage('Failed to load goods.'));
+            .catch(() => setErrorMessage('Failed to load goods.'))
+            .finally(() => setLoading(false));
           break;
         default:
           setGoodsList([]);
       }
-
-      setLoading(false);
     }, 500);
   }, [selectLoad]);
 
@@ -86,8 +87,10 @@ export const App: React.FC = () => {
       </button>
 
       {loadingMsg && <p>Loading...</p>}
-      {selectLoad !== null && <GoodsList goods={goodsList} />}
-      {errorMessage.length > 0 && (
+
+      {!loadingMsg && selectLoad !== null && <GoodsList goods={goodsList} />}
+
+      {!loadingMsg && errorMessage.length > 0 && (
         <p style={{ color: 'red' }}>{errorMessage}</p>
       )}
     </div>
