@@ -14,21 +14,42 @@ enum Load {
 export const App: React.FC = () => {
   const [goodsList, setGoodsList] = useState<Good[]>([]);
   const [selectLoad, setLoad] = useState<Load | null>(null);
+  const [loadingMsg, setLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
 
   useEffect(() => {
-    switch (selectLoad) {
-      case Load.All:
-        getAll().then(goods => setGoodsList(goods));
-        break;
-      case Load.Five:
-        get5First().then(goods => setGoodsList(goods));
-        break;
-      case Load.Red:
-        getRedGoods().then(goods => setGoodsList(goods));
-        break;
-      default:
-        setGoodsList([]);
-    }
+    setLoading(true);
+    setErrorMessage('');
+    setGoodsList([]);
+
+    setTimeout(() => {
+      switch (selectLoad) {
+        case Load.All:
+          getAll()
+            .then(goods => setGoodsList(goods))
+            .catch(() => setErrorMessage('Failed to load goods.'));
+          break;
+        case Load.Five:
+          get5First()
+            .then(goods => setGoodsList(goods))
+            .catch(() => setErrorMessage('Failed to load goods.'));
+          break;
+        case Load.Red:
+          getRedGoods()
+            .then(goods => setGoodsList(goods))
+            .catch(() => setErrorMessage('Failed to load goods.'));
+          break;
+        default:
+          setGoodsList([]);
+      }
+
+      if (goodsList.length > 0) {
+        setErrorMessage('');
+      }
+
+      setLoading(false);
+    }, 500);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectLoad]);
 
   return (
@@ -65,7 +86,11 @@ export const App: React.FC = () => {
         Load red goods
       </button>
 
+      {loadingMsg && <p>Loading...</p>}
       {selectLoad !== null && <GoodsList goods={goodsList} />}
+      {errorMessage.length > 0 && (
+        <p style={{ color: 'red' }}>{errorMessage}</p>
+      )}
     </div>
   );
 };
