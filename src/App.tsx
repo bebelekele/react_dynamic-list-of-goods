@@ -18,6 +18,10 @@ export const App: React.FC = () => {
   const [errorMessage, setErrorMessage] = useState('');
 
   useEffect(() => {
+    if (selectLoad === null) {
+      return;
+    }
+
     setLoading(true);
     setErrorMessage('');
     setGoodsList([]);
@@ -43,13 +47,8 @@ export const App: React.FC = () => {
           setGoodsList([]);
       }
 
-      if (goodsList.length > 0) {
-        setErrorMessage('');
-      }
-
       setLoading(false);
     }, 500);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectLoad]);
 
   return (
